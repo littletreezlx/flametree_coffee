@@ -104,14 +104,14 @@ if [ ! -d "flametree_coffee_server" ]; then
     exit 1
 fi
 
-# 进入服务器目录
-cd flametree_coffee_server
-
-# 检查 package.json 是否存在
-if [ ! -f "package.json" ]; then
-    echo -e "${RED}❌ 错误: 未找到 package.json 文件${NC}"
+# 检查服务器目录中的 package.json 是否存在
+if [ ! -f "flametree_coffee_server/package.json" ]; then
+    echo -e "${RED}❌ 错误: 未找到 flametree_coffee_server/package.json 文件${NC}"
     exit 1
 fi
+
+# 进入服务器目录
+cd flametree_coffee_server
 
 # 检查 node_modules 是否存在
 if [ ! -d "node_modules" ]; then
