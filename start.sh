@@ -4,7 +4,7 @@ echo "🔥 Flametree Coffee 启动脚本"
 echo "================================"
 
 # 定义端口
-SERVER_PORT=50031
+SERVER_PORT=61002
 
 # 颜色定义
 RED='\033[0;31m'
