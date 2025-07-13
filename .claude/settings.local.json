@@ -20,7 +20,8 @@
       "Bash(pnpm list:*)",
       "Bash(grep:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }
