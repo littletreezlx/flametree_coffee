@@ -21,7 +21,10 @@
       "Bash(grep:*)",
       "Bash(pnpm add:*)",
       "Bash(pnpm test:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "Bash(git submodule:*)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": []
   }
