@@ -1,0 +1,208 @@
+{
+  "coffeeMenu": [
+    {
+      "id": "americano",
+      "name": "美式",
+      "category": "美式系列", 
+      "description": "浓郁醇香的经典美式",
+      "prices": {
+        "ice": 25,
+        "hot": 25
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/americano.jpg",
+      "popular": true
+    },
+    {
+      "id": "peach_americano",
+      "name": "桃桃冰美式",
+      "category": "美式系列",
+      "description": "清新桃子香气的冰美式",
+      "prices": {
+        "ice": 32
+      },
+      "available": ["ice"],
+      "image": "/images/peach_americano.jpg",
+      "popular": true
+    },
+    {
+      "id": "lemon_americano", 
+      "name": "冰柠美式",
+      "category": "美式系列",
+      "description": "清爽柠檬香的冰美式",
+      "prices": {
+        "ice": 30
+      },
+      "available": ["ice"],
+      "image": "/images/lemon_americano.jpg",
+      "popular": false
+    },
+    {
+      "id": "vanilla_americano",
+      "name": "香草美式",
+      "category": "美式系列",
+      "description": "香草风味的经典美式",
+      "prices": {
+        "ice": 28,
+        "hot": 28
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/vanilla_americano.jpg",
+      "popular": false
+    },
+    {
+      "id": "pistachio_americano",
+      "name": "开心果云美式",
+      "category": "美式系列",
+      "description": "开心果香气搭配云朵奶泡",
+      "prices": {
+        "ice": 35,
+        "hot": 35
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/pistachio_americano.jpg",
+      "popular": false
+    },
+    {
+      "id": "grape_americano",
+      "name": "冰葡美式",
+      "category": "美式系列",
+      "description": "清新葡萄风味的冰美式",
+      "prices": {
+        "ice": 32
+      },
+      "available": ["ice"],
+      "image": "/images/grape_americano.jpg",
+      "popular": false
+    },
+    {
+      "id": "coconut_americano",
+      "name": "椰椰美式",
+      "category": "美式系列",
+      "description": "热带椰香风味美式",
+      "prices": {
+        "ice": 30,
+        "hot": 30
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/coconut_americano.jpg",
+      "popular": false
+    },
+    {
+      "id": "latte",
+      "name": "拿铁",
+      "category": "拿铁系列",
+      "description": "香滑奶泡与浓郁咖啡的完美结合",
+      "prices": {
+        "ice": 30,
+        "hot": 30
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/latte.jpg",
+      "popular": true
+    },
+    {
+      "id": "caramel_macchiato",
+      "name": "焦糖卡美罗",
+      "category": "拿铁系列",
+      "description": "香甜焦糖与浓郁咖啡的经典搭配",
+      "prices": {
+        "ice": 35,
+        "hot": 35
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/caramel_macchiato.jpg",
+      "popular": true
+    },
+    {
+      "id": "vanilla_latte",
+      "name": "香草拿铁",
+      "category": "拿铁系列",
+      "description": "温暖香草香气的拿铁",
+      "prices": {
+        "ice": 35,
+        "hot": 35
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/vanilla_latte.jpg",
+      "popular": false
+    },
+    {
+      "id": "milo_mocha",
+      "name": "美禄摩卡",
+      "category": "拿铁系列",
+      "description": "童年味道的美禄与摩卡结合",
+      "prices": {
+        "ice": 38,
+        "hot": 38
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/milo_mocha.jpg",
+      "popular": false
+    },
+    {
+      "id": "ice_cream_latte",
+      "name": "冰淇淋拿铁",
+      "category": "拿铁系列",
+      "description": "顶部搭配香草冰淇淋的特色拿铁",
+      "prices": {
+        "ice": 40
+      },
+      "available": ["ice"],
+      "image": "/images/ice_cream_latte.jpg",
+      "popular": true
+    },
+    {
+      "id": "pistachio_latte",
+      "name": "开心果拿铁",
+      "category": "拿铁系列",
+      "description": "开心果香气的醇厚拿铁",
+      "prices": {
+        "ice": 38,
+        "hot": 38
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/pistachio_latte.jpg",
+      "popular": false
+    },
+    {
+      "id": "cloud_latte",
+      "name": "浮云拿铁",
+      "category": "拿铁系列",
+      "description": "如云朵般轻盈的奶泡拿铁",
+      "prices": {
+        "ice": 36,
+        "hot": 36
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/cloud_latte.jpg",
+      "popular": false
+    },
+    {
+      "id": "matcha_latte",
+      "name": "抹茶拿铁",
+      "category": "茶系列", 
+      "description": "日式抹茶与牛奶的和谐融合",
+      "prices": {
+        "ice": 35,
+        "hot": 35
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/matcha_latte.jpg",
+      "popular": true
+    },
+    {
+      "id": "hojicha_latte",
+      "name": "焙茶拿铁",
+      "category": "茶系列",
+      "description": "焙茶的香醇与牛奶的顺滑",
+      "prices": {
+        "ice": 35,
+        "hot": 35
+      },
+      "available": ["ice", "hot"],
+      "image": "/images/hojicha_latte.jpg",
+      "popular": false
+    }
+  ]
+}
