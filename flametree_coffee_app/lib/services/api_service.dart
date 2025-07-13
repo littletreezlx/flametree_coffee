@@ -7,7 +7,7 @@ import '../models/order.dart';
 import 'menu_cache_service.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.0.123:3001/api';
+  static const String baseUrl = 'https://coffee.flametree.synology.me:60443/api';
 
   static Future<List<CoffeeItem>> getMenu({bool forceRefresh = false}) async {
     // 如果不强制刷新，先尝试从缓存获取

@@ -9,7 +9,18 @@
       "Bash(flutter build:*)",
       "Bash(flutter:*)",
       "Bash(mkdir:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(pnpm export:apifox:*)",
+      "Bash(ls:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(tsx:*)",
+      "Bash(pnpm exec tsx:*)",
+      "Bash(pnpm list:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm test:*)"
     ],
     "deny": []
   }

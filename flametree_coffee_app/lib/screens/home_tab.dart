@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/cart_provider.dart';
 import '../models/family_member.dart';
-import '../services/api_service.dart';
 import 'member_selection_screen.dart';
 
 class HomeTab extends StatefulWidget {
@@ -83,6 +82,15 @@ class _HomeTabState extends State<HomeTab> {
       appBar: AppBar(
         title: const Text('火树咖啡厅'),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/settings');
+            },
+            tooltip: '设置',
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(

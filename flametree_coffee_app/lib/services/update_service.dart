@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:open_file/open_file.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateService {
-  static const String baseUrl = 'http://192.168.0.123:3001/api';
+  static const String baseUrl = 'https://coffee.flametree.synology.me:60443/api';
 
   /// 检查是否有新版本可用
   static Future<Map<String, dynamic>?> checkForUpdate() async {
@@ -34,54 +38,132 @@ class UpdateService {
   }
 
   /// 下载并安装更新
-  static Future<bool> downloadAndInstallUpdate(Map<String, dynamic> updateInfo) async {
+  static Future<bool> downloadAndInstallUpdate(
+    Map<String, dynamic> updateInfo, {
+    Function(int, int)? onProgress,
+  }) async {
     try {
       final downloadUrl = updateInfo['downloadUrl'] as String?;
       if (downloadUrl == null) {
         throw Exception('Download URL not found');
       }
 
-      // 下载更新文件
-      final response = await http.get(Uri.parse(downloadUrl));
-      if (response.statusCode != 200) {
-        throw Exception('Failed to download update');
+      // 检查并请求权限
+      if (Platform.isAndroid) {
+        final hasPermission = await _requestPermissions();
+        if (!hasPermission) {
+          throw Exception('权限被拒绝，无法下载更新');
+        }
       }
 
-      // 获取应用目录
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/update.apk';
+      // 下载更新文件
+      final filePath = await _downloadFile(downloadUrl, onProgress);
       
-      // 保存文件
-      final file = File(filePath);
-      await file.writeAsBytes(response.bodyBytes);
-
-      // 在Android上，通常需要使用Intent来安装APK
-      // 这里简化处理，实际应用中可能需要使用插件如 install_plugin
+      // 安装更新
       if (Platform.isAndroid) {
         return await _installApkOnAndroid(filePath);
       } else if (Platform.isIOS) {
         // iOS应用更新通常通过App Store
-        return false;
+        await _openAppStore(updateInfo);
+        return true;
       }
 
       return true;
     } catch (e) {
-      print('Error downloading and installing update: $e');
+      if (kDebugMode) {
+        print('Error downloading and installing update: $e');
+      }
       return false;
     }
+  }
+
+  /// 下载文件并支持进度回调
+  static Future<String> _downloadFile(
+    String url,
+    Function(int, int)? onProgress,
+  ) async {
+    final request = http.Request('GET', Uri.parse(url));
+    final response = await request.send();
+    
+    if (response.statusCode != 200) {
+      throw Exception('下载失败: ${response.statusCode}');
+    }
+
+    // 获取文件保存路径
+    final directory = await getApplicationDocumentsDirectory();
+    final fileName = url.split('/').last;
+    final filePath = '${directory.path}/$fileName';
+    
+    // 创建文件
+    final file = File(filePath);
+    final sink = file.openWrite();
+    
+    int downloadedBytes = 0;
+    final totalBytes = response.contentLength ?? 0;
+    
+    try {
+      await for (final chunk in response.stream) {
+        sink.add(chunk);
+        downloadedBytes += chunk.length;
+        onProgress?.call(downloadedBytes, totalBytes);
+      }
+    } finally {
+      await sink.close();
+    }
+    
+    return filePath;
+  }
+
+  /// 请求必要权限
+  static Future<bool> _requestPermissions() async {
+    if (Platform.isAndroid) {
+      // 请求存储权限
+      final storageStatus = await Permission.storage.request();
+      
+      // 请求安装权限
+      final installStatus = await Permission.requestInstallPackages.request();
+      
+      return storageStatus.isGranted && installStatus.isGranted;
+    }
+    return true;
   }
 
   /// 在Android上安装APK
   static Future<bool> _installApkOnAndroid(String filePath) async {
     try {
-      // 这里需要使用平台特定的代码来安装APK
-      // 可以使用 method_channel 或者现有的插件
-      // 为了简化，这里只是返回true
-      print('Installing APK at: $filePath');
-      return true;
+      if (kDebugMode) {
+        print('Installing APK at: $filePath');
+      }
+      
+      // 使用open_file插件打开APK文件进行安装
+      final result = await OpenFile.open(
+        filePath,
+        type: 'application/vnd.android.package-archive',
+      );
+      
+      return result.type == ResultType.done;
     } catch (e) {
-      print('Error installing APK: $e');
+      if (kDebugMode) {
+        print('Error installing APK: $e');
+      }
       return false;
+    }
+  }
+
+  /// 打开App Store（iOS）
+  static Future<void> _openAppStore(Map<String, dynamic> updateInfo) async {
+    try {
+      final appStoreUrl = updateInfo['appStoreUrl'] as String?;
+      if (appStoreUrl != null) {
+        final uri = Uri.parse(appStoreUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error opening App Store: $e');
+      }
     }
   }
 
@@ -131,16 +213,35 @@ class UpdateService {
   }
 
   /// 检查应用启动时是否需要更新
-  static Future<void> checkForUpdateOnStartup() async {
+  static Future<Map<String, dynamic>?> checkForUpdateOnStartup() async {
     try {
       final updateInfo = await checkForUpdate();
       if (updateInfo != null && updateInfo['hasUpdate'] == true) {
-        print('New version available: ${updateInfo['version']}');
-        // 可以在这里显示更新提示
+        if (kDebugMode) {
+          print('New version available: ${updateInfo['version']}');
+        }
+        return updateInfo;
       }
+      return null;
     } catch (e) {
-      print('Error checking for updates on startup: $e');
+      if (kDebugMode) {
+        print('Error checking for updates on startup: $e');
+      }
       // 静默失败，不影响应用启动
+      return null;
+    }
+  }
+
+  /// 格式化文件大小
+  static String formatFileSize(int bytes) {
+    if (bytes < 1024) {
+      return '${bytes}B';
+    } else if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)}KB';
+    } else if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)}MB';
+    } else {
+      return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)}GB';
     }
   }
 }

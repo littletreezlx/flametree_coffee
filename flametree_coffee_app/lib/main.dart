@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/main_screen.dart';
-import 'services/update_service.dart';
+import 'screens/settings_screen.dart';
+import 'widgets/update_checker.dart';
 
 void main() {
   runApp(const FlametreeCoffeeApp());
@@ -16,15 +17,6 @@ class FlametreeCoffeeApp extends StatefulWidget {
 }
 
 class _FlametreeCoffeeAppState extends State<FlametreeCoffeeApp> {
-  @override
-  void initState() {
-    super.initState();
-    // 启动时检查更新
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      UpdateService.checkForUpdateOnStartup();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -56,7 +48,10 @@ class _FlametreeCoffeeAppState extends State<FlametreeCoffeeApp> {
             ),
           ),
         ),
-        home: const MainScreen(),
+        home: const UpdateChecker(child: MainScreen()),
+        routes: {
+          '/settings': (context) => const SettingsScreen(),
+        },
         debugShowCheckedModeBanner: false,
       ),
     );
