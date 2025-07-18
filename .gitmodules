@@ -1,0 +1,3 @@
+[submodule "flutter_common"]
+	path = flutter_common
+	url = https://github.com/littletreezlx/flutter_common.git
