@@ -31,6 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Flutter Common - 为独立开发者设计的实用框架
+  flutter_common:
+    git:
+      url: https://github.com/littletreezlx/flutter_common.git
+      ref: master
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_common/flutter_common_core.dart';
 import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/main_screen.dart';
@@ -6,6 +7,14 @@ import 'screens/settings_screen.dart';
 import 'widgets/update_checker.dart';
 
 void main() {
+  // 初始化flutter_common日志系统
+  Log.init(
+    enableConsoleLog: true,
+    minLevel: LogLevel.debug,
+  );
+  
+  Log.i('Flametree Coffee App启动', tag: 'App');
+  
   runApp(const FlametreeCoffeeApp());
 }
 

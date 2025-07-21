@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_common/flutter_common_core.dart';
 import 'package:http/http.dart' as http;
 import '../models/coffee_item.dart';
 import '../models/family_member.dart';
@@ -9,18 +10,18 @@ import 'menu_cache_service.dart';
 class ApiService {
   static const String baseUrl = 'https://coffee.flametree.synology.me:60443/api';
 
-  static Future<List<CoffeeItem>> getMenu({bool forceRefresh = false}) async {
+  static Future<Result<List<CoffeeItem>>> getMenu({bool forceRefresh = false}) async {
     // 如果不强制刷新，先尝试从缓存获取
     if (!forceRefresh) {
       final cachedMenu = await MenuCacheService.getMenuFromCache();
       if (cachedMenu != null) {
-        print('Using cached menu data');
-        return cachedMenu;
+        Log.i('Using cached menu data', tag: 'ApiService');
+        return Result.success(cachedMenu);
       }
     }
 
     try {
-      print('Fetching menu from server');
+      Log.i('Fetching menu from server', tag: 'ApiService');
       final response = await http.get(Uri.parse('$baseUrl/menu'));
       
       if (response.statusCode == 200) {
@@ -30,24 +31,25 @@ class ApiService {
         // 保存到缓存
         await MenuCacheService.saveMenuToCache(menu);
         
-        return menu;
+        return Result.success(menu);
       } else {
         // 服务器失败时，尝试使用缓存数据
         final cachedMenu = await MenuCacheService.getMenuFromCache();
         if (cachedMenu != null) {
-          print('Server failed, using cached menu');
-          return cachedMenu;
+          Log.w('Server failed, using cached menu', tag: 'ApiService');
+          return Result.success(cachedMenu);
         }
-        throw Exception('Failed to load menu');
+        return Result.failure(AppError.server('菜单加载失败'));
       }
     } catch (e) {
+      Log.e('Error loading menu', tag: 'ApiService', error: e);
       // 网络错误时，尝试使用缓存数据
       final cachedMenu = await MenuCacheService.getMenuFromCache();
       if (cachedMenu != null) {
-        print('Network error, using cached menu');
-        return cachedMenu;
+        Log.w('Network error, using cached menu', tag: 'ApiService');
+        return Result.success(cachedMenu);
       }
-      throw Exception('Error loading menu: $e');
+      return Result.failure(AppError.network('网络连接失败，请检查网络设置'));
     }
   }
 
