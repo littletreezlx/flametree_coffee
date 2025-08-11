@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_common/flutter_common_core.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import 'home_tab.dart';
@@ -16,14 +17,28 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _showMenu = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    Log.i('主界面初始化', tag: 'MainScreen');
+  }
+  
+  @override
+  void dispose() {
+    Log.i('主界面销毁', tag: 'MainScreen');
+    super.dispose();
+  }
 
   void _onMemberSelected() {
+    Log.i('成员选择完成，显示菜单', tag: 'MainScreen');
     setState(() {
       _showMenu = true;
     });
   }
 
   void _onBackToHome() {
+    Log.i('返回首页', tag: 'MainScreen');
     setState(() {
       _showMenu = false;
     });
@@ -48,6 +63,12 @@ class _MainScreenState extends State<MainScreen> {
               if (_showMenu && index == 0) {
                 _onBackToHome();
               } else {
+                final tabNames = ['首页', '购物车', '订单'];
+                Log.i('切换到${tabNames[index]}', tag: 'MainScreen', context: {
+                  'fromIndex': _currentIndex,
+                  'toIndex': index,
+                  'tabName': tabNames[index],
+                });
                 setState(() {
                   _currentIndex = index;
                 });

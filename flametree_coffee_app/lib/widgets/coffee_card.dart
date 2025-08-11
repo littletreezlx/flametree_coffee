@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_common/flutter_common_core.dart';
 import 'package:provider/provider.dart';
 import '../models/coffee_item.dart';
 import '../providers/cart_provider.dart';
@@ -145,6 +146,12 @@ class _CoffeeCardState extends State<CoffeeCard> {
                       if (quantity > 0) ...[
                         GestureDetector(
                           onTap: () {
+                            Log.i('点击减少商品', tag: 'CoffeeCard', context: {
+                              'coffeeId': widget.coffeeItem.id,
+                              'coffeeName': widget.coffeeItem.name,
+                              'temperature': selectedTemperature,
+                              'currentQuantity': quantity,
+                            });
                             cartProvider.removeItem(
                               widget.coffeeItem.id,
                               selectedTemperature,
@@ -177,11 +184,19 @@ class _CoffeeCardState extends State<CoffeeCard> {
                       ],
                       GestureDetector(
                         onTap: () {
+                          final price = widget.coffeeItem.prices[selectedTemperature]!;
+                          Log.i('点击添加商品', tag: 'CoffeeCard', context: {
+                            'coffeeId': widget.coffeeItem.id,
+                            'coffeeName': widget.coffeeItem.name,
+                            'temperature': selectedTemperature,
+                            'price': price,
+                            'currentQuantity': quantity,
+                          });
                           cartProvider.addItem(
                             widget.coffeeItem.id,
                             widget.coffeeItem.name,
                             selectedTemperature,
-                            widget.coffeeItem.prices[selectedTemperature]!,
+                            price,
                           );
                         },
                         child: Container(

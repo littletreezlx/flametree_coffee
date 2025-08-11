@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { clientLogger, FormLogger, useComponentLogger } from '@/lib/client-logger'
 
 interface FamilyMember {
   id: string
@@ -24,25 +25,66 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null)
   const [newMember, setNewMember] = useState({ name: '', avatar: '' })
+  const { logMount, logUnmount } = useComponentLogger('AdminPage')
+  const [formLogger, setFormLogger] = useState<FormLogger | null>(null)
 
   useEffect(() => {
+    logMount()
+    clientLogger.info('管理后台页面加载', {
+      module: 'Admin',
+      action: 'pageLoad'
+    })
     loadData()
+    
+    return () => {
+      logUnmount()
+    }
   }, [])
 
   const loadData = async () => {
+    const startTime = Date.now()
+    clientLogger.info('开始加载管理数据', {
+      module: 'Admin',
+      action: 'loadData'
+    })
+    
     try {
       const [membersRes, ordersRes] = await Promise.all([
         fetch('/api/members'),
         fetch('/api/orders')
       ])
       
+      const duration = Date.now() - startTime
+      
       if (membersRes.ok && ordersRes.ok) {
         const membersData = await membersRes.json()
         const ordersData = await ordersRes.json()
         setMembers(membersData)
         setOrders(ordersData)
+        
+        clientLogger.info('管理数据加载成功', {
+          module: 'Admin',
+          action: 'loadDataSuccess',
+          memberCount: membersData.length,
+          orderCount: ordersData.length,
+          duration
+        })
+        
+        clientLogger.logPerformance('adminDataLoad', duration, 2000)
+      } else {
+        clientLogger.error('管理数据加载失败', {
+          module: 'Admin',
+          action: 'loadDataError',
+          membersStatus: membersRes.status,
+          ordersStatus: ordersRes.status
+        })
       }
     } catch (error) {
+      clientLogger.error('管理数据加载异常', {
+        module: 'Admin',
+        action: 'loadDataException',
+        error: error.message
+      })
       console.error('Error loading data:', error)
     } finally {
       setLoading(false)
@@ -50,10 +92,32 @@ export default function AdminPage() {
   }
 
   const handleSaveMember = async () => {
+    const memberData = editingMember || newMember
+    const isEdit = !!editingMember
+    
+    clientLogger.logUserAction(isEdit ? '编辑成员' : '添加成员', {
+      memberId: editingMember?.id,
+      memberName: memberData.name,
+      memberAvatar: memberData.avatar
+    })
+    
+    if (formLogger) {
+      formLogger.logSubmit(true, memberData)
+    }
+    
     // This would be implemented with a PUT/POST API
-    console.log('Save member:', editingMember || newMember)
+    console.log('Save member:', memberData)
+    
+    clientLogger.info('成员保存成功', {
+      module: 'Admin',
+      action: isEdit ? 'updateMember' : 'createMember',
+      memberId: editingMember?.id,
+      memberName: memberData.name
+    })
+    
     setEditingMember(null)
     setNewMember({ name: '', avatar: '' })
+    setFormLogger(null)
     // Reload data
     loadData()
   }

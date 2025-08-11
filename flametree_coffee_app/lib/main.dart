@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_common/flutter_common_core.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +10,43 @@ import 'widgets/update_checker.dart';
 
 void main() {
   // 初始化flutter_common日志系统
-  Log.init(
-    enableConsoleLog: true,
-    minLevel: LogLevel.debug,
-  );
+  _initializeLogging();
   
-  Log.i('Flametree Coffee App启动', tag: 'App');
+  // 注册Flutter错误处理
+  FlutterError.onError = (FlutterErrorDetails details) {
+    Log.e('Flutter框架错误', 
+      tag: 'FlutterError',
+      error: details.exception,
+      stackTrace: details.stack,
+      context: {
+        'library': details.library,
+        'context': details.context?.toDescription(),
+      }
+    );
+  };
+  
+  Log.i('火树咖啡应用启动', tag: 'App', context: {
+    'platform': Platform.operatingSystem,
+    'version': Platform.version,
+    'locale': Platform.localeName,
+  });
   
   runApp(const FlametreeCoffeeApp());
+}
+
+void _initializeLogging() {
+  // 根据环境配置日志级别
+  final isDebug = !kReleaseMode;
+  
+  Log.init(
+    enableConsoleLog: isDebug,
+    minLevel: isDebug ? LogLevel.debug : LogLevel.info,
+  );
+  
+  Log.i('日志系统初始化完成', tag: 'Logger', context: {
+    'mode': isDebug ? 'debug' : 'release',
+    'minLevel': isDebug ? 'DEBUG' : 'INFO',
+  });
 }
 
 class FlametreeCoffeeApp extends StatefulWidget {
