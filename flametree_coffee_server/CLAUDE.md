@@ -21,13 +21,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # 安装依赖
 npm install
 
-# 启动开发服务器 (端口 61002，使用Turbopack)
+# 启动开发服务器 (端口 61007，使用Turbopack)
 npm run dev
 
 # 构建生产版本
 npm run build
 
-# 启动生产服务器 (端口 61002)
+# 启动生产服务器 (端口 61007)
 npm start
 
 # 代码检查
@@ -113,7 +113,7 @@ flametree_coffee_server/
 ## 开发注意事项
 
 ### 端口配置
-- 开发和生产环境统一使用端口 **61002**
+- 开发和生产环境统一使用端口 **61007**
 - 避免与其他服务端口冲突
 
 ### 热重载
